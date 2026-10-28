@@ -170,11 +170,9 @@
     "Ninguém quer saber o preço do dólar. Nós não temos um dólar. Eu não recebo em dólar.",
   ];
 
-  // Ordem nova a cada visita; o link #n abre direto na frase n do FRASES.md.
+  // Ordem nova a cada visita.
   const ordem = FRASES.map((_, i) => i);
   for (let i = ordem.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ordem[i], ordem[j]] = [ordem[j], ordem[i]]; }
-  const pedida = parseInt(location.hash.slice(1), 10) - 1;
-  if (FRASES[pedida]) ordem.unshift(...ordem.splice(ordem.indexOf(pedida), 1));
 
   for (const i of ordem) {
     const s = document.createElement("section");
@@ -198,9 +196,22 @@
   const obs = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting || !("i" in e.target.dataset)) return;
     atual = +e.target.dataset.i;
-    history.replaceState(null, "", "#" + (atual + 1));
   }), { root: feed, threshold: 0.6 });
   feed.querySelectorAll(".capa[data-i]").forEach(s => obs.observe(s));
+
+  // A cada 15 s entra outra frase sorteada. Se a pessoa rolar, a contagem recomeça; com a aba escondida, para.
+  const capas = [...feed.querySelectorAll(".capa[data-i]")];
+  let relogio;
+  const armar = () => { clearTimeout(relogio); relogio = setTimeout(trocar, 15000); };
+  function trocar() {
+    if (document.hidden) return armar();
+    let alvo; do alvo = capas[Math.floor(Math.random() * capas.length)]; while (capas.length > 1 && +alvo.dataset.i === atual);
+    alvo.scrollIntoView({ behavior: reduz ? "auto" : "smooth" });
+    armar();
+  }
+  feed.addEventListener("scrollend", armar);
+  feed.addEventListener("touchstart", armar, { passive: true });
+  armar();
 
 
   // A capa vira imagem (1080×1350, formato de post) para mandar no Zap ou postar no status.
@@ -260,7 +271,7 @@
 
   $("compartilhar").onclick = async () => {
     const btn = $("compartilhar"), i = atual;
-    const url = location.href.split("#")[0] + "#" + (i + 1);
+    const url = location.href.split("#")[0];
     const texto = `“${FRASES[i]}” — Guerrinha\n${url}`;
     btn.disabled = true;
     try {

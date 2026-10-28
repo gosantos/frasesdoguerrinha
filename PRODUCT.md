@@ -31,7 +31,7 @@ Uma homenagem a Adroaldo Guerra Filho, o popular Guerrinha, feita a partir das f
 
 - **Mobile first, sem exceção:** cerca de 90% do tráfego vem de smartphones e só 10% do desktop. Toda decisão começa pela tela do celular. O desktop é adaptação: precisa funcionar bem, mas nunca dita layout, interação ou prioridade.
 - O site abre direto do arquivo, sem servidor: as frases ficam embutidas no `index.html`. `FRASES.md` guarda a lista e as fontes; ao mudar uma frase, mude nos dois.
-- Cada frase deve poder ser compartilhada e ter link próprio.
+- Cada frase pode ser compartilhada como imagem. O link é sempre o do site, sem número de frase; cada visita começa numa frase aleatória e a frase troca sozinha a cada 15 segundos.
 - Em aberto: domínio e hospedagem.
 
 ## Brand Commitments
