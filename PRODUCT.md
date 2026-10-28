@@ -42,7 +42,7 @@ Uma homenagem a Adroaldo Guerra Filho, o popular Guerrinha, feita a partir das f
 
 ## Evidence on Hand
 
-- `FRASES.md`: 54 frases, de imprensa, Wikipedia, entrevista (Portal 3, 2011), perfil da Coletiva, monografia com transcrições do Sala de Redação (Lapecjor) e sites de citações.
+- `FRASES.md`: 24 frases, de imprensa, Wikipedia, entrevista (Portal 3, 2011), perfil da Coletiva, monografia com transcrições do Sala de Redação (Lapecjor) e sites de citações.
 - Não há fotos, áudios nem depoimentos. Não inventar nenhum deles nem atribuir frases novas a ele.
 
 ## Product Principles
