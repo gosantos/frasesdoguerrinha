@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#d71920">
+<title>Guerrinha · Uma homenagem a Adroaldo Guerra Filho</title>
+<meta name="description" content="Uma homenagem a Adroaldo Guerra Filho, o popular Guerrinha, do Sala de Redação da Rádio Gaúcha 600 AM. As frases dele, uma por capa.">
+<meta property="og:title" content="Guerrinha · Uma homenagem a Adroaldo Guerra Filho">
+<meta property="og:description" content="As frases do popular Guerrinha, do Sala de Redação da Rádio Gaúcha 600 AM.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo+Narrow:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* Capa do caderno de esportes do dia seguinte: cada frase é a manchete.
+     Celular primeiro; no desktop a capa só fica centralizada sobre o vermelho. */
+  :root {
+    --jornal: #ffffff; --tinta: #0d0d0d; --verm: #d71920; --amar: #ffd200; --cinza: #4a4a4a;
+    --manchete: "Archivo Black", "Arial Black", sans-serif;
+    --texto: "Archivo Narrow", "Arial Narrow", sans-serif;
+    --barra: calc(76px + env(safe-area-inset-bottom));
+  }
+  * { box-sizing: border-box; margin: 0; }
+  ::selection { background: var(--amar); color: var(--tinta); }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--verm); color: var(--tinta); font-family: var(--texto); }
+  :focus-visible { outline: 3px solid var(--amar); outline-offset: 2px; }
+
+  main { height: 100svh; overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain; scrollbar-width: none; }
+  main::-webkit-scrollbar { display: none; }
+
+  .capa {
+    height: 100svh; scroll-snap-align: start; scroll-snap-stop: always;
+    display: grid; grid-template-rows: auto 1fr; background: var(--jornal);
+    padding-bottom: var(--barra); max-width: 560px; margin: 0 auto;
+  }
+  .hom { background: var(--tinta); color: #fff; padding: max(14px, env(safe-area-inset-top)) 16px 14px; display: grid; gap: 4px; font: 700 .9375rem/1.2 var(--texto); }
+  .hom b { color: var(--amar); font: 400 clamp(1.5rem, 7.4vw, 2rem)/1 var(--manchete); letter-spacing: -.02em; text-transform: uppercase; }
+  .hom span:last-child { margin-top: 2px; }
+
+  .manchete {
+    align-self: center; padding: 20px 16px; margin: 0;
+    font: 400 clamp(2.25rem, 11vw, 3.75rem)/.98 var(--manchete); letter-spacing: -.035em; text-transform: uppercase; text-wrap: balance;
+    transition: filter .18s ease-out, opacity .18s ease-out;
+  }
+  .manchete[data-tam="l"] { font-size: clamp(1.75rem, 8.4vw, 2.875rem); line-height: 1.02; }
+  .manchete mark { background: var(--amar); color: inherit; padding: 0 .08em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+
+  /* Última capa: o expediente do jornal. */
+  .expediente { align-self: center; padding: 24px 16px; display: grid; gap: 14px; font: 500 1.0625rem/1.45 var(--texto); }
+  .expediente h2 { font: 400 1.75rem/1 var(--manchete); text-transform: uppercase; letter-spacing: -.03em; }
+  .expediente a { color: var(--tinta); font-weight: 700; text-decoration-color: var(--verm); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .expediente button { justify-self: start; }
+
+  /* Barra fixa no alcance do polegar: crédito e compartilhar. */
+  nav {
+    position: fixed; inset: auto 0 0; z-index: 2; max-width: 560px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 52px; gap: 12px; align-items: center;
+    padding: 10px 16px max(12px, env(safe-area-inset-bottom)); background: var(--jornal); border-top: 4px solid var(--tinta);
+  }
+  nav small { display: grid; gap: 6px; font: 700 .6875rem/1 var(--texto); text-transform: uppercase; letter-spacing: .08em; color: var(--cinza); }
+  nav small a { color: inherit; text-decoration: none; }
+  button {
+    min-height: 52px; border: 0; border-radius: 0; cursor: pointer; padding: 0 12px;
+    font: 400 .875rem/1 var(--manchete); text-transform: uppercase; letter-spacing: .01em; white-space: nowrap;
+    background: var(--tinta); color: #fff; -webkit-tap-highlight-color: transparent;
+  }
+  button.share { display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+  .ic { width: 22px; height: 22px; flex: none; }
+  button.share { padding: 0; }
+  button.share { background: var(--jornal); color: var(--tinta); box-shadow: inset 0 0 0 3px var(--tinta); }
+  button:active { transform: translateY(1px); }
+  button[disabled] { opacity: .6; cursor: progress; }
+
+
+  .aviso { position: fixed; left: 16px; right: 16px; bottom: calc(var(--barra) + 40px); z-index: 3; max-width: 528px; margin: 0 auto;
+    background: var(--tinta); color: #fff; padding: 12px 14px; font: 700 .9375rem/1.3 var(--texto);
+    opacity: 0; transform: translateY(8px); transition: opacity .25s ease-out, transform .25s ease-out; pointer-events: none; }
+  .aviso.on { opacity: 1; transform: none; }
+
+  .vazio { height: 100svh; display: grid; place-content: center; gap: 8px; padding: 16px; color: #fff; text-align: center; font: 700 1.125rem/1.4 var(--texto); }
+
+  @media (prefers-reduced-motion: reduce) { .manchete, .aviso { transition: none; } }
+</style>
+</head>
+<body>
+<main id="feed" aria-label="Frases do Guerrinha"></main>
+<nav aria-label="Ações">
+  <small><span>Made in POA</span><a href="https://x.com/eugolive" rel="noopener">@eugolive</a></small>
+  <button id="compartilhar" class="share" aria-label="Compartilhar a capa"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M12 3v12M7 8l5-5 5 5M5 13v8h14v-8"/></svg></button>
+</nav>
+<div class="aviso" id="aviso" role="status"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const feed = $("feed");
+  const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const aviso = msg => { $("aviso").textContent = msg; $("aviso").classList.add("on"); clearTimeout(aviso.t); aviso.t = setTimeout(() => $("aviso").classList.remove("on"), 2200); };
+
+  // A frase vira manchete: o último trecho (depois da última vírgula ou ponto) vai no marca-texto.
+  function partir(f) {
+    const corpo = f.replace(/[.…]+$/, "");
+    const m = corpo.match(/^(.*[,.!?:]\s)(\S.*)$/);
+    if (m && m[2].split(" ").length >= 2) return [m[1], m[2]];
+    const p = corpo.split(" ");
+    const n = Math.min(3, Math.max(1, Math.floor(p.length / 3)));
+    return [p.slice(0, -n).join(" ") + " ", p.slice(-n).join(" ")];
+  }
+
+  const cabecalho = `
+    <p class="hom"><span>Uma homenagem a</span> <b>Adroaldo Guerra Filho</b><span>o Guerrinha · 1955–2026</span></p>`;
+
+  // As frases ficam aqui dentro para a página abrir direto do arquivo, sem servidor.
+  // Fonte e anotações: FRASES.md (ao mudar lá, copie para cá).
+  const FRASES = [
+    "Não pode querer ir pra guerra com secador de cabelo.",
+    "Não adianta ir pra guerra com uma escova de dente.",
+    "Não dá pra servir farofa em restaurante com ventilador de teto.",
+    "Se tu acha que está certa essa aposta, põe o teu apartamento então.",
+    "Estou numa fase em que durmo no gelo e acordo suado.",
+    "Tu comprou o cavalo pra ler ou pra correr? Porque se for pra ler, está desfeito o negócio.",
+    "Se algo deu certo, então tem que mudar.",
+    "Se beleza fosse crime, eu seria inocente.",
+    "Precisa acertar o tiro no ânus do mosquito.",
+    "Vou botar uma gravata pra te ouvir.",
+    "Se caminhar fosse bom, carteiro não morria.",
+    "Não se cura o câncer com aspirina.",
+    "Não dá pra comer banana e assoviar ao mesmo tempo.",
+    "O pianista é no piano. O guitarrista é na guitarra.",
+    "Para quem tem unha encravada, meia furada é luxo.",
+    "Eu não sei nada de tudo. Eu nunca consegui falar com o cavalo: eu paro, falo com ele e ele não me responde. Futebol é meu forte.",
+    "Estou numa fase tão ruim que, se eu comprar um circo, o anão cresce.",
+    "Estou numa fase de beber a água da salsicha.",
+    "Time ruim motivado, vai perder motivado!",
+    "Com esse salário eu decoro o calendário da Coreia do Norte de trás pra frente.",
+    "O Inter era um avião que vinha ameaçando cair.",
+    "O Aguirre só não tomaria 5.",
+    "A imprensa não derruba nada. Pô, é resultado.",
+    "O cara tá com a moral nas alturas.",
+    "Me dá 250 mil por mês que eu vou correr riscos e assumo lá.",
+    "Eu sou o mais moderado da coisa.",
+    "Quem está começando tem que botar na cabeça que não sabe nada.",
+    "Eu aprendo todo dia.",
+    "Não tenho alegria quando o Grêmio perde, tenho alegria quando o Inter vence.",
+    "Muitas vezes, na maioria delas, eu fico com pena da bola. Acho que ela sofre.",
+    "Sou gozador, sou sacana.",
+    "O jornalista é igual médico, né?",
+    "Os bons ficam. Os ruins, não.",
+    "Que horas eu tenho que estar lá no estúdio?",
+    "Já estou bêbado dessa cachaça.",
+    "O cavalo passou encilhado uma vez e eu montei. Por enquanto, não corcoveei.",
+    "Fazia turfe porque ninguém queria fazer.",
+    "O que se diz, está dito.",
+    "É como ter um revólver na mão: se não souber usar, torna-se um risco enorme.",
+    "O Sala é um canhão de audiência.",
+    "Trabalhar com a cabeça cansa.",
+    "Não quero morrer dentro de uma redação.",
+    "Nunca tive o sonho de ser chefe de redação.",
+    "Fui narrador de turfe, mas jamais gostaria de ser narrador de futebol.",
+    "Antes de ser colorado, sou profissional.",
+    "Se o jornalista não for tendencioso e trabalhar com a verdade, sempre terá o respaldo de todos os lados.",
+    "Não fui um bom pai, mas sou um grande avô.",
+    "Tudo que tem lá, tem em Porto Alegre.",
+    "Adoro filmes de ação, pois, pelo menos na ficção, os bandidos se dão mal.",
+    "Não gosto de me incomodar, nem de criar caso.",
+    "O Guerrinha, na verdade, é um cara alegre, espirituoso e responsável, mas com suas maluquices tradicionais.",
+    "Depois das quatro da manhã, se for mulher melhor.",
+    "A última calcinha que eu vi foi a da vizinha. No varal.",
+    "Ninguém quer saber o preço do dólar. Nós não temos um dólar. Eu não recebo em dólar.",
+  ];
+
+  // Ordem nova a cada visita; o link #n abre direto na frase n do FRASES.md.
+  const ordem = FRASES.map((_, i) => i);
+  for (let i = ordem.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ordem[i], ordem[j]] = [ordem[j], ordem[i]]; }
+  const pedida = parseInt(location.hash.slice(1), 10) - 1;
+  if (FRASES[pedida]) ordem.unshift(...ordem.splice(ordem.indexOf(pedida), 1));
+
+  for (const i of ordem) {
+    const s = document.createElement("section");
+    s.className = "capa"; s.dataset.i = i;
+    const [a, b] = partir(FRASES[i]);
+    s.innerHTML = cabecalho + `<h1 class="manchete"${FRASES[i].length > 80 ? ' data-tam="l"' : ""}></h1>`;
+    const h = s.querySelector("h1");
+    h.append(a); const mk = document.createElement("mark"); mk.textContent = b; h.append(mk);
+    feed.append(s);
+  }
+  const fim = document.createElement("section");
+  fim.className = "capa";
+  fim.innerHTML = cabecalho + `<div class="expediente"><h2>Fim da edição</h2>
+    <p>${FRASES.length} frases do Guerrinha, reunidas de entrevistas, imprensa e do Sala de Redação.</p>
+    <p>Feito por <a href="https://x.com/eugolive" rel="noopener">@eugolive</a>. Made in POA.</p>
+    <button type="button" id="denovo">Voltar à primeira capa</button></div>`;
+  feed.append(fim);
+  $("denovo").onclick = () => feed.firstElementChild.scrollIntoView({ behavior: reduz ? "auto" : "smooth" });
+
+  let atual = ordem[0];
+  const obs = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting || !("i" in e.target.dataset)) return;
+    atual = +e.target.dataset.i;
+    history.replaceState(null, "", "#" + (atual + 1));
+  }), { root: feed, threshold: 0.6 });
+  feed.querySelectorAll(".capa[data-i]").forEach(s => obs.observe(s));
+
+
+  // A capa vira imagem (1080×1350, formato de post) para mandar no Zap ou postar no status.
+  async function desenhar(i) {
+    await Promise.all([document.fonts.load('400 80px "Archivo Black"'), document.fonts.load('700 40px "Archivo Narrow"')]);
+    const W = 1080, H = 1350, P = 72, c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    const g = c.getContext("2d");
+    g.fillStyle = "#ffffff"; g.fillRect(0, 0, W, H);
+    g.fillStyle = "#d71920"; g.fillRect(0, 0, W, 290);
+    g.fillStyle = "#fff"; g.textBaseline = "alphabetic";
+    g.font = '400 100px "Archivo Black"';
+    g.font = `400 ${Math.floor(100 * (W - 2 * P) / g.measureText("GUERRINHA").width)}px "Archivo Black"`;
+    g.fillText("GUERRINHA", P, 190);
+    g.fillRect(P, 220, W - 2 * P, 5);
+    g.font = '700 32px "Archivo Narrow"';
+    g.fillText("SALA DE REDAÇÃO", P, 268);
+    g.textAlign = "right"; g.fillText("RÁDIO GAÚCHA 600 AM", W - P, 268); g.textAlign = "left";
+    g.fillStyle = "#0d0d0d"; g.fillRect(0, 290, W, 96);
+    g.font = '700 34px "Archivo Narrow"'; g.fillStyle = "#fff";
+    const h1 = "Uma homenagem a ", h2 = "Adroaldo Guerra Filho", h3 = ", o Guerrinha (1955–2026)";
+    let x = P; g.fillText(h1, x, 350); x += g.measureText(h1).width;
+    g.fillStyle = "#ffd200"; g.fillText(h2, x, 350); x += g.measureText(h2).width;
+    g.fillStyle = "#fff"; g.fillText(h3, x, 350);
+
+    // Manchete: quebra por palavra, reduz o corpo até caber na área.
+    const [a, b] = partir(FRASES[i]);
+    const pal = [...a.trim().split(" ").map(w => [w.toUpperCase(), false]), ...b.split(" ").map(w => [w.toUpperCase(), true])];
+    const topo = 450, base = H - 170, larg = W - 2 * P;
+    let tam = 120, linhas;
+    for (; tam > 40; tam -= 4) {
+      g.font = `400 ${tam}px "Archivo Black"`;
+      linhas = []; let l = [];
+      for (const p of pal) {
+        const teste = [...l, p].map(q => q[0]).join(" ");
+        if (l.length && g.measureText(teste).width > larg) { linhas.push(l); l = [p]; } else l.push(p);
+      }
+      linhas.push(l);
+      if (linhas.length * tam * 1.02 <= base - topo) break;
+    }
+    const alt = tam * 1.02, y0 = topo + (base - topo - linhas.length * alt) / 2 + tam * .82;
+    linhas.forEach((l, n) => {
+      let xx = P; const y = y0 + n * alt;
+      l.forEach(([w, marca], k) => {
+        const txt = w + (k < l.length - 1 ? " " : ""), wd = g.measureText(txt).width;
+        if (marca) { g.fillStyle = "#ffd200"; g.fillRect(xx - 4, y - tam * .8, g.measureText(w).width + 8 + (k < l.length - 1 && l[k + 1][1] ? wd - g.measureText(w).width : 0), tam * .98); }
+        g.fillStyle = "#0d0d0d"; g.fillText(w, xx, y); xx += wd;
+      });
+    });
+
+    g.fillStyle = "#0d0d0d"; g.fillRect(0, H - 120, W, 8);
+    g.font = '700 32px "Archivo Narrow"';
+    g.fillText(location.host ? (location.host + location.pathname).replace(/\/(index\.html)?$/, "").toUpperCase() : "@EUGOLIVE", P, H - 52);
+    g.textAlign = "right"; g.fillText("MADE IN POA", W - P, H - 52);
+    return new Promise(r => c.toBlob(r, "image/png"));
+  }
+
+  $("compartilhar").onclick = async () => {
+    const btn = $("compartilhar"), i = atual;
+    const url = location.href.split("#")[0] + "#" + (i + 1);
+    const texto = `“${FRASES[i]}” — Guerrinha\n${url}`;
+    btn.disabled = true;
+    try {
+      const png = await desenhar(i);
+      const arq = new File([png], `guerrinha-${i + 1}.png`, { type: "image/png" });
+      if (navigator.canShare?.({ files: [arq] })) {
+        await navigator.share({ files: [arq], text: texto });
+      } else {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(arq); a.download = arq.name; a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        try { await navigator.clipboard.writeText(texto); aviso("Capa baixada e link copiado."); }
+        catch { aviso("Capa baixada."); }
+      }
+    } catch (e) {
+      if (e?.name !== "AbortError") aviso("Não deu pra montar a capa. Tente de novo.");
+    } finally {
+      btn.disabled = false;
+    }
+  };
+</script>
+</body>
+</html>

@@ -55,3 +55,6 @@ Uma frase por item. O site lê este arquivo.
 - Adoro filmes de ação, pois, pelo menos na ficção, os bandidos se dão mal.
 - Não gosto de me incomodar, nem de criar caso.
 - O Guerrinha, na verdade, é um cara alegre, espirituoso e responsável, mas com suas maluquices tradicionais.
+- Depois das quatro da manhã, se for mulher melhor.
+- A última calcinha que eu vi foi a da vizinha. No varal.
+- Ninguém quer saber o preço do dólar. Nós não temos um dólar. Eu não recebo em dólar.
