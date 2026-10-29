@@ -79,6 +79,15 @@
 
   .vazio { height: 100svh; display: grid; place-content: center; gap: 8px; padding: 16px; color: #fff; text-align: center; font: 700 1.125rem/1.4 var(--texto); }
 
+  /* Navegador sem compartilhar arquivo (Firefox): mostra a capa para segurar e compartilhar. */
+  dialog.foto { border: 0; padding: 16px; margin: auto; width: min(100% - 32px, 480px); max-height: 100svh; background: var(--jornal); color: var(--tinta); display: none; gap: 12px; }
+  dialog.foto[open] { display: grid; }
+  dialog.foto::backdrop { background: rgb(13 13 13 / .85); }
+  dialog.foto img { width: 100%; height: auto; max-height: 62svh; object-fit: contain; box-shadow: 0 0 0 3px var(--tinta); -webkit-touch-callout: default; }
+  dialog.foto p { font: 700 1rem/1.35 var(--texto); }
+  dialog.foto div { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  dialog.foto button { min-height: 48px; border: 0; font: 400 .875rem/1 var(--manchete); text-transform: uppercase; background: var(--tinta); color: #fff; }
+  dialog.foto button + button { background: var(--jornal); color: var(--tinta); box-shadow: inset 0 0 0 3px var(--tinta); }
   @media (prefers-reduced-motion: reduce) { .manchete, .aviso { transition: none; } }
 </style>
 </head>
@@ -88,6 +97,11 @@
   <small><span>Made in POA</span><a href="https://x.com/eugolive" rel="noopener">@eugolive</a></small>
   <button id="compartilhar" class="share" aria-label="Compartilhar a capa"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M12 3v12M7 8l5-5 5 5M5 13v8h14v-8"/></svg></button>
 </nav>
+<dialog class="foto" id="foto" aria-label="Capa para compartilhar">
+  <img id="fotoimg" alt="">
+  <p>Segure a imagem e escolha <b>Compartilhar imagem</b>.</p>
+  <div><button id="copiar" type="button">Copiar link</button><button id="fechar" type="button">Fechar</button></div>
+</dialog>
 <div class="aviso" id="aviso" role="status"></div>
 
 <script>
@@ -229,15 +243,19 @@
     return prontas[i] ??= desenhar(i).then(png => (arquivos[i] = new File([png], `guerrinha-${i + 1}.png`, { type: "image/png" })));
   }
 
+  $("fechar").onclick = () => $("foto").close();
+  $("foto").onclick = e => { if (e.target === $("foto")) $("foto").close(); };
+
   async function compartilhar(arq, texto) {
     try {
       if (navigator.canShare?.({ files: [arq] })) return await navigator.share({ files: [arq], text: texto });
-      if (navigator.share) return await navigator.share({ text: texto });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(arq); a.download = arq.name; a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-      try { await navigator.clipboard.writeText(texto); aviso("Capa baixada e link copiado."); }
-      catch { aviso("Capa baixada."); }
+      const img = $("fotoimg");
+      URL.revokeObjectURL(img.src);
+      img.src = URL.createObjectURL(arq); img.alt = FRASES[atual];
+      $("copiar").onclick = async () => {
+        try { await navigator.clipboard.writeText(texto); aviso("Link copiado."); } catch { aviso(texto); }
+      };
+      $("foto").showModal();
     } catch (e) {
       if (e?.name !== "AbortError") aviso("Não deu pra compartilhar. Tente de novo.");
     }
